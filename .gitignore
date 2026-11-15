@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+/target/
+**/*.rs.bk
+.DS_Store
+node_modules/
+/site/
+/.venv-docs/
