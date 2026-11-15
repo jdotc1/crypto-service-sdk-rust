@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+cff-version: 1.2.0
+message: "If you use crypto-service-sdk-rust in research or production write-ups, please cite it as below."
+type: software
+title: "crypto-service-sdk-rust: a typed Rust client for the Crypto Service REST API"
+abstract: >-
+  An async and blocking, typed Rust client for the v2 REST API of
+  crypto-server: hashing, AEAD, server-held keys, ML-KEM, ML-DSA,
+  SLH-DSA, HPKE, KMS and OPAQUE. A thin client with no cryptography of
+  its own, it runs the shared Crypto Service conformance kit against a
+  live server.
+authors:
+  - family-names: Rousseau
+    given-names: Sebastien
+version: "0.0.40"
+# Dual-licensed, at the user's option (LICENSE-APACHE, LICENSE-MIT). CFF
+# 1.2.0 takes SPDX licence identifiers, not an SPDX expression; a list of
+# several means the work is available under any of them.
+license:
+  - Apache-2.0
+  - MIT
+repository-code: "https://github.com/sebastienrousseau/crypto-service-sdk-rust"
+url: "https://crypto-service.co"
+keywords:
+  - cryptography
+  - post-quantum
+  - ML-KEM
+  - KMS
+  - Rust
