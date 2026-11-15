@@ -1,0 +1,40 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# cargo-fuzz targets for the response decoding path: `cargo +nightly fuzz
+# run <target>` from the repository root. A crate of its own, with its own
+# lockfile and an empty `[workspace]`, so it never touches the main
+# crate's MSRV, dependency policy or package contents.
+[package]
+name = "crypto-service-sdk-fuzz"
+version = "0.0.0"
+edition = "2021"
+license = "Apache-2.0 OR MIT"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[workspace]
+
+[lib]
+name = "crypto_service_sdk_fuzz"
+path = "src/lib.rs"
+
+[dependencies]
+libfuzzer-sys = "0.4.10"
+crypto-service-sdk = { path = ".." }
+serde = "1.0.228"
+serde_json = "1.0.149"
+
+[[bin]]
+name = "problem"
+path = "fuzz_targets/problem.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "response"
+path = "fuzz_targets/response.rs"
+test = false
+doc = false
+bench = false
