@@ -1,0 +1,92 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+[package]
+name = "crypto-service-sdk"
+version = "0.0.40"
+edition = "2021"
+rust-version = "1.85"
+description = "Async and blocking typed client for the Crypto Service REST API (crypto-server v2)"
+license = "Apache-2.0 OR MIT"
+repository = "https://github.com/sebastienrousseau/crypto-service-sdk-rust"
+homepage = "https://crypto-service.co"
+documentation = "https://docs.rs/crypto-service-sdk"
+readme = "README.md"
+keywords = ["cryptography", "post-quantum", "kms", "client", "api"]
+categories = ["api-bindings", "cryptography", "web-programming::http-client"]
+# crates.io only, from the release workflow (docs/adr/0005).
+publish = ["crates-io"]
+# What the package ships: the library, its tests, examples and benches
+# with the kit they read, and the licences. The README demo, fuzz/,
+# docs/, scripts/ and CI files stay in the repository.
+include = [
+  "/Cargo.toml",
+  "/Cargo.lock",
+  "/README.md",
+  "/CHANGELOG.md",
+  "/LICENSE-APACHE",
+  "/LICENSE-MIT",
+  "/src/**/*.rs",
+  "/tests/**/*.rs",
+  "/examples/**/*.rs",
+  "/benches/**/*.rs",
+  "/benches/responses/*.json",
+  "/conformance/**",
+]
+
+[lib]
+name = "crypto_service_sdk"
+
+[features]
+default = []
+# `crypto_service_sdk::blocking::Client`: the same methods, each blocking
+# the calling thread on a runtime the client owns.
+blocking = ["tokio/rt-multi-thread"]
+# Exposes `crypto_service_sdk::fuzzing`, the response decoding without the
+# network, for this repository's benches. Not public API: hidden from the
+# docs and free to change in any release.
+internals = []
+
+# cargo-fuzz builds with `--cfg fuzzing`, which compiles src/fuzzing.rs.
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ["cfg(fuzzing)", "cfg(coverage_nightly)"] }
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+base64 = "0.23.1"
+http = "1.4.0"
+reqwest = { version = "0.13.1", default-features = false, features = ["rustls", "http2", "gzip"] }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+thiserror = "2.0.17"
+tokio = { version = "1.49.0", features = ["time"] }
+zeroize = "1.8.2"
+
+[dev-dependencies]
+criterion = { version = "0.7.0", default-features = false, features = ["cargo_bench_support", "async_tokio"] }
+hmac = "0.12.1"
+regex = "1.12.2"
+sha2 = "0.10.9"
+tokio = { version = "1.49.0", features = ["macros", "rt-multi-thread", "net", "io-util", "time"] }
+
+# Client-side cost, no network: `make bench` (needs the internals feature).
+[[bench]]
+name = "client"
+harness = false
+required-features = ["internals"]
+
+# Loopback round trips against CRYPTO_SERVICE_URL; skipped without it.
+[[bench]]
+name = "roundtrip"
+harness = false
+
+[[test]]
+name = "blocking"
+required-features = ["blocking"]
+
+[[example]]
+name = "blocking"
+required-features = ["blocking"]
