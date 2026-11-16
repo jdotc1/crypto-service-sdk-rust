@@ -68,7 +68,7 @@ body to every answer type. Seeds are in `fuzz/seeds/`.
 
 Versions advance by `0.0.1`, in lockstep with the Crypto Service SDKs;
 the maintainer opens a release. A release is prepared, then tagged by the
-maintainer, and the [release workflow](.github/workflows/release.yml)
+maintainer, and the [release workflow](https://github.com/sebastienrousseau/crypto-service-sdk-rust/blob/main/.github/workflows/release.yml)
 does the rest:
 
 1. On the release branch: rename `## [<version>] - Unreleased` in

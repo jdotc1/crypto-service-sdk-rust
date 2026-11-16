@@ -13,7 +13,7 @@ document and the conformance kit, and reaches this crate afterwards.
    agreed first.
 2. Branch from the current `feat/v<version>` release branch.
 3. Run `make check`; with a crypto-server running, `make conformance`
-   (see [DEVELOPMENT.md](DEVELOPMENT.md)).
+   (see [DEVELOPMENT.md](https://github.com/sebastienrousseau/crypto-service-sdk-rust/blob/main/DEVELOPMENT.md)).
 4. Add or change the tests in the same commit as the behaviour.
 5. Update `CHANGELOG.md` under the current version.
 
@@ -23,7 +23,7 @@ document and the conformance kit, and reaches this crate afterwards.
   in the imperative, at most 50 characters; body wrapped at 72, saying
   what and why.
 - Sign off every commit (`git commit -s`): you certify the
-  [Developer Certificate of Origin](DCO.txt). The DCO workflow checks it.
+  [Developer Certificate of Origin](https://github.com/sebastienrousseau/crypto-service-sdk-rust/blob/main/DCO.txt). The DCO workflow checks it.
 
 ## Rules that do not bend
 

@@ -19,6 +19,6 @@ upgrading.
   minimal reproducer. Never paste real keys, tokens or plaintexts.
 - A problem in the server itself (a wrong answer the kit does not
   cover): [crypto-service issues](https://github.com/sebastienrousseau/crypto-service/issues).
-- Security reports: never in an issue; see [SECURITY.md](SECURITY.md).
+- Security reports: never in an issue; see [SECURITY.md](https://github.com/sebastienrousseau/crypto-service-sdk-rust/blob/main/SECURITY.md).
 
 The project is maintained in a personal capacity, with no SLA.
