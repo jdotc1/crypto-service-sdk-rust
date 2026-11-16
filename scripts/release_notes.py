@@ -68,14 +68,19 @@ def _json(run: Runner, *args: str) -> Any:
 
 
 def highlights(note: str) -> list[str]:
-    """The bullets of the note's Highlights section, wrapped lines joined."""
+    """The bullets of the note's Highlights section, wrapped lines joined.
+
+    A bullet may use either Markdown list marker, ``- `` (what the
+    notes' markdownlint style writes) or ``* ``; each is returned with
+    ``* ``, the marker the rest of the release body uses.
+    """
     bullets: list[str] = []
     inside = False
     for line in note.splitlines():
         if line.startswith("## "):
             inside = line.startswith("## Highlights")
-        elif inside and line.startswith("* "):
-            bullets.append(line.rstrip())
+        elif inside and line.startswith(("* ", "- ")):
+            bullets.append("* " + line[2:].rstrip())
         elif inside and bullets and line.startswith("  "):
             bullets[-1] += " " + line.strip()
     if not 2 <= len(bullets) <= 4:

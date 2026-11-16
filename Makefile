@@ -10,9 +10,9 @@ CLIPPY_FLAGS := -D warnings -W clippy::cognitive_complexity -W clippy::too_many_
 # The live tests fail instead of skipping when these are missing.
 LIVE := CRYPTO_SERVICE_REQUIRE_LIVE=1
 
-.PHONY: check fmt fmt-check lint build test coverage coverage-branch doc deny complexity versions package-check api-check docs-lint manual conformance live-env examples readme bench bench-smoke fuzz regression demo clean
+.PHONY: check fmt fmt-check lint build test coverage coverage-branch doc deny complexity versions package-check release-notes api-check docs-lint manual conformance live-env examples readme bench bench-smoke fuzz regression demo clean
 
-check: fmt-check lint build test coverage doc deny versions package-check complexity
+check: fmt-check lint build test coverage doc deny versions package-check release-notes complexity
 
 fmt:
 	$(CARGO) fmt
@@ -60,6 +60,12 @@ versions:
 
 package-check:
 	scripts/check-package.sh
+
+# The release-notes script's tests, then its check: once CHANGELOG.md
+# dates the current version, releases/v<version>.md has 2 to 4 highlights.
+release-notes:
+	python3 -I -m unittest discover -s scripts -p 'test_*.py'
+	python3 -I scripts/release_notes.py check
 
 api-check:
 	scripts/api-check.sh
