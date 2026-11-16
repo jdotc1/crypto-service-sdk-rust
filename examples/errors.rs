@@ -39,7 +39,7 @@ async fn main() -> Result<(), Error> {
     let problem = crypto_service_sdk::Problem::from_body(response.status, &response.body);
     println!("{} {}: {:?}", problem.status, problem.kind, problem.errors);
     assert_eq!(problem.kind, "urn:crypto-service:problem:validation-failed");
-    assert!(!problem.errors.is_empty());
+    assert_ne!(problem.errors.len(), 0);
 
     let nowhere = Client::builder("http://127.0.0.1:9")
         .timeout(Duration::from_secs(2))

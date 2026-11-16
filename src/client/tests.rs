@@ -35,7 +35,7 @@ async fn health_sends_the_default_headers_and_no_body() {
     assert_eq!(seen.header("x-api-key"), None);
     assert_eq!(seen.header("authorization"), None);
     assert_eq!(seen.header("traceparent"), None);
-    assert!(seen.body.is_empty());
+    assert_eq!(seen.body.len(), 0);
     assert_eq!(USER_AGENT, format!("crypto-service-sdk-rust/{VERSION}"));
 }
 

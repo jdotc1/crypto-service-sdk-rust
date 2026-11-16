@@ -29,6 +29,6 @@ fn serde_uses_hex_for_bytes_and_text_for_strings() {
 fn constructors_wrap_the_value() {
     assert_eq!(SecretBytes::from(&[1u8][..]).expose_secret(), [1]);
     assert_eq!(SecretBytes::from_hex("0a").unwrap().expose_secret(), [10]);
-    assert!(SecretBytes::default().expose_secret().is_empty());
-    assert!(SecretString::default().expose_secret().is_empty());
+    assert_eq!(SecretBytes::default().expose_secret().len(), 0);
+    assert_eq!(SecretString::default().expose_secret().len(), 0);
 }
