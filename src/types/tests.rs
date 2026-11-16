@@ -124,7 +124,7 @@ fn answers_decode_with_secrets_wrapped() {
     let debug = format!("{opened:?}");
     assert!(
         !debug.contains("hi\"") && !debug.contains("6869"),
-        "{debug}"
+        "Debug output is not redacted as required"
     );
     let exported: ExportedKey = serde_json::from_value(json!({
         "keyId": "k", "algorithm": "ed25519", "publicKey": "01", "privateKey": "02",

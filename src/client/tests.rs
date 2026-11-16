@@ -64,7 +64,7 @@ async fn credentials_and_a_fixed_traceparent_travel_and_never_show() {
     let debug = format!("{client:?}");
     assert!(
         !debug.contains("synthetic") && debug.contains("<redacted>"),
-        "{debug}"
+        "Debug output is not redacted as required"
     );
 }
 
@@ -121,7 +121,7 @@ fn the_builder_refuses_bad_headers_and_redacts_credentials() {
     let debug = format!("{builder:?}");
     assert!(
         !debug.contains("synthetic") && debug.contains("<redacted>"),
-        "{debug}"
+        "Debug output is not redacted as required"
     );
     let empty = base().traceparent(Traceparent::Fixed("  ".into()));
     assert!(!empty
@@ -200,7 +200,7 @@ async fn send_raw_returns_any_status_with_extra_headers() {
     let debug = format!("{response:?}");
     assert!(
         debug.contains("415") && !debug.contains("detail"),
-        "{debug}"
+        "Debug output is not redacted as required"
     );
 }
 
@@ -350,7 +350,7 @@ fn requests_show_no_header_values_or_body_in_debug() {
     let debug = format!("{request:?}");
     assert!(
         debug.contains("x-api-key") && !debug.contains("secret"),
-        "{debug}"
+        "Debug output is not redacted as required"
     );
     let response = HttpResponse {
         status: 200,
