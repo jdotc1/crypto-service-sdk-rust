@@ -36,7 +36,13 @@ HTML
 root="$(mktemp -d)"
 trap 'rm -rf "$root"' EXIT
 ln -s "$PWD/site" "$root/crypto-service-sdk-rust"
-lychee --offline --no-progress --root-dir "$root" 'site/**/*.html'
+# rustdoc renders tracing's blanket `WithSubscriber` impl (pulled in by
+# hyper and h2) on every public type, with tracing's own relative link
+# `dispatcher#setting-the-default-subscriber`. That page exists only in
+# tracing's docs, so it is the one link excluded.
+lychee --offline --no-progress --root-dir "$root" \
+  --exclude '/crypto_service_sdk/dispatcher#setting-the-default-subscriber$' \
+  'site/**/*.html'
 
 footer='&copy; 2026 <a href="https://sebastienrousseau.com/" rel="author">Sebastien Rousseau</a>'
 missing=0
