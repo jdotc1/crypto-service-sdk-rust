@@ -73,8 +73,8 @@ does the rest:
 
 1. On the release branch: rename `## [<version>] - Unreleased` in
    `CHANGELOG.md` to `## [<version>] - <date>`, update
-   `releases/v<version>.md` (two to four Highlights), and run
-   `make versions`.
+   `releases/v<version>.md` (two to four Highlights, `-` or `*`
+   bullets), and run `make versions release-notes`.
 2. Run the workflow by hand first (Actions, Release, Run workflow): a dry
    run builds, tests, packages, writes the SBOM and checksums, and prints
    what a release would carry.

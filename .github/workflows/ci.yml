@@ -96,6 +96,8 @@ jobs:
         run: make versions
       - name: The package ships no repository-only file
         run: make package-check
+      - name: Release-notes script tests and the dated version's note
+        run: make release-notes
       - name: API breakage against the last crates.io release (none yet)
         run: make api-check
 
