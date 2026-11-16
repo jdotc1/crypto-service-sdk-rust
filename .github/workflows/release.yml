@@ -91,6 +91,8 @@ jobs:
             echo "::error::$REF_NAME carries no signature"
             exit 1
           fi
+          git config gpg.ssh.allowedSignersFile KEYS.asc
+          git verify-tag "$REF_NAME"
       - name: Every version restatement agrees (with the tag on a release)
         env:
           REF_NAME: ${{ github.ref_name }}
