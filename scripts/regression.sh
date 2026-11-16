@@ -17,7 +17,11 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 port="${REGRESSION_PORT:-3102}"
-ref="$(cat ci/server.ref)"
+ref="$(tr -d '[:space:]' < ci/server.ref)"
+if ! [[ "$ref" =~ ^[0-9a-f]{40}$ ]]; then
+  echo "regression: ci/server.ref must hold a full 40-character commit SHA" >&2
+  exit 1
+fi
 server="${CRYPTO_SERVICE_SERVER_DIR:-}"
 tmp="$(mktemp -d)"
 pid=""
