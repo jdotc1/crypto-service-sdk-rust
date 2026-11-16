@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# The suite complexity ceilings per function (cognitive 15, 60 lines),
+# enforced by `make lint` with -W clippy::cognitive_complexity and
+# -W clippy::too_many_lines.
+cognitive-complexity-threshold = 15
+too-many-lines-threshold = 60
+# Product names the docs use as words, not code.
+doc-valid-idents = ["OpenAPI", "CycloneDX", "TypeScript", "XChaCha20", "BLAKE2b", "BLAKE3", "..", "X25519", "ChaCha20", "SHA3", "OpenSSL"]

@@ -1,0 +1,129 @@
+// SPDX-License-Identifier: Apache-2.0 OR MIT
+//! A loopback HTTP server for unit tests: it answers each connection with
+//! a canned response and hands the request back. No crypto-server needed.
+
+use std::fmt::Write as _;
+use std::io::{BufRead, BufReader, Write};
+use std::net::TcpListener;
+use std::sync::mpsc::{self, Receiver};
+use std::thread;
+
+/// The request the stub received.
+#[derive(Debug)]
+pub(crate) struct Seen {
+    pub request_line: String,
+    pub headers: Vec<(String, String)>,
+    pub body: String,
+}
+
+impl Seen {
+    /// The first header with this (lower-case) name.
+    pub fn header(&self, name: &str) -> Option<&str> {
+        self.headers
+            .iter()
+            .find(|(key, _)| key == name)
+            .map(|(_, value)| value.as_str())
+    }
+}
+
+/// Starts a stub answering `status` with `body`; returns its base URL and
+/// a receiver for the request it saw.
+pub(crate) fn serve(status: u16, body: &str) -> (String, Receiver<Seen>) {
+    serve_raw(response(status, body))
+}
+
+/// The bytes of a response with `status` and `body`.
+pub(crate) fn response(status: u16, body: &str) -> Vec<u8> {
+    response_with(status, &[], body)
+}
+
+/// The bytes of a response with `status`, extra `headers` and `body`.
+pub(crate) fn response_with(status: u16, headers: &[(&str, &str)], body: &str) -> Vec<u8> {
+    let mut head = format!("HTTP/1.1 {status} Stub\r\nContent-Type: application/json\r\n");
+    for (name, value) in headers {
+        let _ = write!(head, "{name}: {value}\r\n");
+    }
+    let _ = write!(
+        head,
+        "Content-Length: {}\r\nConnection: close\r\n\r\n{body}",
+        body.len()
+    );
+    head.into_bytes()
+}
+
+/// Starts a stub that writes `response` verbatim, whatever it is, and
+/// closes the connection.
+pub(crate) fn serve_raw(response: Vec<u8>) -> (String, Receiver<Seen>) {
+    serve_sequence(vec![response])
+}
+
+/// Starts a stub that answers one connection after another with each of
+/// `responses` in turn, closing each; the receiver gets every request.
+pub(crate) fn serve_sequence(responses: Vec<Vec<u8>>) -> (String, Receiver<Seen>) {
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind loopback");
+    let url = format!("http://{}", listener.local_addr().expect("local addr"));
+    let (sender, receiver) = mpsc::channel();
+    thread::spawn(move || {
+        for response in responses {
+            let (stream, _) = listener.accept().expect("accept");
+            let mut reader = BufReader::new(stream.try_clone().expect("clone stream"));
+            let seen = read_request(&mut reader);
+            let mut stream = stream;
+            stream.write_all(&response).expect("write response");
+            let _ = sender.send(seen);
+        }
+    });
+    (url, receiver)
+}
+
+fn read_request(reader: &mut impl BufRead) -> Seen {
+    let mut request_line = String::new();
+    reader.read_line(&mut request_line).expect("request line");
+    let mut headers = Vec::new();
+    loop {
+        let mut line = String::new();
+        reader.read_line(&mut line).expect("header line");
+        let line = line.trim_end();
+        if line.is_empty() {
+            break;
+        }
+        let (key, value) = line.split_once(':').unwrap_or((line, ""));
+        headers.push((key.trim().to_ascii_lowercase(), value.trim().to_owned()));
+    }
+    let length = headers
+        .iter()
+        .find(|(key, _)| key == "content-length")
+        .and_then(|(_, value)| value.parse::<usize>().ok())
+        .unwrap_or(0);
+    let mut body = vec![0; length];
+    reader.read_exact(&mut body).expect("body");
+    Seen {
+        request_line: request_line.trim_end().to_owned(),
+        headers,
+        body: String::from_utf8(body).expect("utf-8 body"),
+    }
+}
+
+/// A listener that accepts connections and never answers; for timeouts.
+pub(crate) fn silent() -> String {
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind loopback");
+    let url = format!("http://{}", listener.local_addr().expect("local addr"));
+    thread::spawn(move || {
+        let mut held = Vec::new();
+        for stream in listener.incoming() {
+            held.push(stream);
+        }
+    });
+    url
+}
+
+/// A loopback URL whose port is bound but not listening, so a connection
+/// is refused; the port stays reserved while the socket lives.
+pub(crate) fn refused() -> (String, tokio::net::TcpSocket) {
+    let socket = tokio::net::TcpSocket::new_v4().expect("socket");
+    socket
+        .bind("127.0.0.1:0".parse().expect("addr"))
+        .expect("bind");
+    let url = format!("http://{}", socket.local_addr().expect("local addr"));
+    (url, socket)
+}

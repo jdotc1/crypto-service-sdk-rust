@@ -1,0 +1,211 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+#
+# Format, lint, complexity, build and test on stable and on the minimum
+# supported Rust (rust-version in Cargo.toml), coverage (lines, regions
+# and branches), the dependency policy (cargo-deny), release checks, and
+# the conformance kit, examples, README blocks and a benchmark smoke run
+# against a live crypto-server at the commit in ci/server.ref.
+name: CI
+
+on:
+  push:
+    branches: [main, "feat/*"]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  lint:
+    name: Format and lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
+        with:
+          components: rustfmt, clippy
+      - name: Format
+        run: make fmt-check
+      - name: Clippy (pedantic, every feature set)
+        run: make lint
+      - name: Docs
+        run: make doc
+
+  test:
+    name: Build and unit tests (${{ matrix.toolchain }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # stable, and the MSRV: keep 1.85.0 equal to rust-version.
+        toolchain: [stable, 1.85.0]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
+        with:
+          toolchain: ${{ matrix.toolchain }}
+      - name: Build (benches included)
+        run: cargo build --locked --all-targets --all-features
+      - name: Unit tests (live tests report themselves skipped)
+        run: cargo test --locked --all-features
+      - name: Benchmark smoke run (round trips skip without a server)
+        run: make bench-smoke
+
+  complexity:
+    name: Complexity ceilings
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # The version the baseline was measured with; bump both together.
+      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+        with:
+          tool: rust-code-analysis-cli@0.0.25
+      - name: Cyclomatic, cognitive, Halstead and length per function
+        run: make complexity
+
+  release-checks:
+    name: Versions, package contents and API breakage
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
+      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+        with:
+          tool: cargo-semver-checks@0.51.0
+      - name: Every version restatement agrees with Cargo.toml
+        run: make versions
+      - name: The package ships no repository-only file
+        run: make package-check
+      - name: API breakage against the last crates.io release (none yet)
+        run: make api-check
+
+  coverage:
+    name: Coverage (100% lines and regions)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
+        with:
+          components: llvm-tools-preview
+      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+        with:
+          tool: cargo-llvm-cov@0.9.1
+      - name: Coverage gate
+        run: make coverage
+
+  coverage-branch:
+    name: Coverage (100% branches, nightly)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
+        with:
+          toolchain: nightly
+          components: llvm-tools-preview
+      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+        with:
+          tool: cargo-llvm-cov@0.9.1
+      - name: Branch coverage gate
+        run: make coverage-branch
+
+  deny:
+    name: Dependency policy (cargo-deny)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
+      - name: Install cargo-deny
+        run: cargo install cargo-deny --locked --version 0.20.2
+      - name: Advisories, licences, bans, sources
+        run: make deny
+
+  conformance:
+    name: Conformance kit against crypto-server
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # ci/server.ref comes from the pull request, so it is checked to be
+      # a full commit SHA and fetched with git rather than handed to
+      # actions/checkout as a ref.
+      - name: Check out crypto-server at the commit in ci/server.ref
+        run: |
+          ref="$(tr -d '[:space:]' < ci/server.ref)"
+          if ! [[ "$ref" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "ci/server.ref must hold a full 40-character commit SHA" >&2
+            exit 1
+          fi
+          git init -q server
+          git -C server fetch -q --depth 1 \
+            https://github.com/sebastienrousseau/crypto-service.git "$ref"
+          git -C server checkout -q --detach FETCH_HEAD
+          test "$(git -C server rev-parse HEAD)" = "$ref"
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          version: 11.9.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+      - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
+      - name: Build the server
+        working-directory: server
+        run: pnpm install --frozen-lockfile && pnpm -r run build
+      - name: Start crypto-server with a throwaway key and JWT secret
+        run: |
+          key="ci-$(od -An -N12 -tx1 /dev/urandom | tr -d ' \n')"
+          secret="ci-jwt-$(od -An -N24 -tx1 /dev/urandom | tr -d ' \n')"
+          echo "::add-mask::$key"
+          echo "::add-mask::$secret"
+          {
+            echo "CRYPTO_SERVICE_URL=http://127.0.0.1:3102"
+            echo "CRYPTO_SERVICE_API_KEY=$key"
+            echo "CRYPTO_SERVICE_JWT_SECRET=$secret"
+          } >> "$GITHUB_ENV"
+          cd server/packages/crypto-server
+          CRYPTO_API_KEY="$key" JWT_SECRET="$secret" PORT=3102 HOST=127.0.0.1 \
+            RATE_LIMIT_MAX=100000 NODE_ENV=development \
+            nohup node dist/index.js > "$RUNNER_TEMP/server.log" 2>&1 &
+          for _ in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3102/health; then exit 0; fi
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/server.log"
+          exit 1
+      - name: Conformance kit, live tests, every example and README block
+        run: make conformance
+      - name: Benchmark smoke run, round trip included
+        run: make bench-smoke
+      - name: Server log
+        if: failure()
+        run: cat "$RUNNER_TEMP/server.log"
