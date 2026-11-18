@@ -393,6 +393,30 @@ async fn the_body_limit_and_a_cut_body_are_transport_errors() {
     assert!(matches!(error, Error::Transport(_)), "{error:?}");
 }
 
+#[tokio::test]
+async fn a_redirect_is_returned_not_followed_with_the_credentials() {
+    let (elsewhere, followed) = serve(200, HEALTH);
+    let location = format!("{elsewhere}/health");
+    let redirect = response_with(302, &[("Location", &location)], "");
+    let (url, seen) = serve_raw(redirect);
+    let client = Client::builder(url)
+        .api_key("synthetic-api-key")
+        .build()
+        .expect("client");
+    let error = client.health().await.expect_err("a 302 is not a success");
+    assert_eq!(error.status(), Some(302));
+    assert_eq!(
+        seen.recv().expect("request").header("x-api-key"),
+        Some("synthetic-api-key")
+    );
+    assert!(
+        followed
+            .recv_timeout(std::time::Duration::from_millis(300))
+            .is_err(),
+        "the redirect was followed"
+    );
+}
+
 #[test]
 fn requests_show_no_header_values_or_body_in_debug() {
     let mut headers = HeaderMap::new();
