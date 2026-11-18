@@ -325,7 +325,14 @@ zeroising types, and a 2xx body is zeroised after decoding; request
 bodies handed to the HTTP stack are not. Response bodies are read up to
 64 MiB. The decoding paths are fuzzed, every dependency is checked by
 `cargo deny`, and CodeQL and OpenSSF Scorecard run on `main`; releases
-carry an SBOM and build provenance.
+carry an SBOM and build provenance, and rebuild bit for bit
+([`docs/REPRODUCING.md`](docs/REPRODUCING.md)).
+
+The client also accepts an `http://` base URL, for any host, and then
+sends credentials and bodies in clear text: use `https://` for every
+server that is not on the same machine. The threat model, trust
+boundaries and residual risks are in
+[`docs/ASSURANCE.md`](docs/ASSURANCE.md).
 
 Report vulnerabilities according to [`SECURITY.md`](SECURITY.md).
 

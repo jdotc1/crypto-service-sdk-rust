@@ -70,6 +70,8 @@ nav:
   - Policies: POLICIES.md
   - Packaging: packaging.md
   - Reproducing a release: REPRODUCING.md
+  - Assurance case: ASSURANCE.md
+  - Security review 2026-11: security-review-2026-11.md
   - Roadmap: ROADMAP.md
   - Decision records:
       - Index: adr/README.md
