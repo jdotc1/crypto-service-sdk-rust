@@ -63,12 +63,13 @@
 
 ```toml
 [dependencies]
-crypto-service-sdk = "0.0.40"
+crypto-service-sdk = "0.0.41"
 tokio = { version = "1.49", features = ["macros", "rt-multi-thread"] }
 ```
 
-0.0.40 is the first release published to crates.io. Before it is out,
-depend on the repository instead:
+The crate is on [crates.io](https://crates.io/crates/crypto-service-sdk)
+from 0.0.40; the snippet names the version `main` prepares, so use the
+newest published one until it is out, or depend on the repository:
 `crypto-service-sdk = { git = "https://github.com/sebastienrousseau/crypto-service-sdk-rust" }`.
 Add `features = ["blocking"]` for `blocking::Client`. HTTPS uses rustls
 (no OpenSSL) with the platform's trust store.
@@ -217,7 +218,7 @@ their environment.
   call), `.retry(RetryPolicy)`, `.traceparent(..)` and `.transport(..)`.
   One `async` method per operation. `Clone + Send + Sync`; clones share
   one connection pool. Every request sends
-  `User-Agent: crypto-service-sdk-rust/0.0.40`.
+  `User-Agent: crypto-service-sdk-rust/<version>`.
 - **`blocking::Client`** (feature `blocking`): the same methods without
   `async`, on a runtime the client owns.
 - **Types** (`src/types/`): one request and one answer type per

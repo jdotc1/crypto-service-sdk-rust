@@ -8,7 +8,7 @@ the server, which holds the keys and runs the algorithms.
 
 ```toml
 [dependencies]
-crypto-service-sdk = "0.0.40"
+crypto-service-sdk = "0.0.41"
 ```
 
 - [Architecture](ARCHITECTURE.md): how a call travels.

@@ -8,7 +8,7 @@ body:
     id: version
     attributes:
       label: crypto-service-sdk-rust Version or Commit
-      placeholder: "0.0.40"
+      placeholder: "0.0.41"
     validations:
       required: true
   - type: input
@@ -16,7 +16,7 @@ body:
     attributes:
       label: crypto-server Version
       description: The `version` field of `GET /`.
-      placeholder: "0.0.40"
+      placeholder: "0.0.41"
     validations:
       required: true
   - type: input

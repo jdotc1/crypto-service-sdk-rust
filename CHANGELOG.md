@@ -6,6 +6,8 @@ All notable changes to this crate are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions move in
 `0.0.1` steps, in lockstep with the Crypto Service SDKs.
 
+## [0.0.41] - Unreleased
+
 ## [0.0.40] - 2026-11-16
 
 The first release: a typed client for crypto-server's v2 API at commit

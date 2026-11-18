@@ -6,7 +6,8 @@
 
 | Version | Status | Fixes |
 | :--- | :--- | :--- |
-| `0.0.40` | Current (first release) | Yes |
+| `0.0.41` | Current (in preparation on `main`) | Yes |
+| `0.0.40` | First release, latest on crates.io | Yes, until 0.0.41 is out |
 
 Versions move in `0.0.1` steps, in lockstep with the Crypto Service
 SDKs; the latest release receives fixes, and an older one is fixed by

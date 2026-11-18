@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0 OR MIT
 [package]
 name = "crypto-service-sdk"
-version = "0.0.40"
+version = "0.0.41"
 edition = "2021"
 rust-version = "1.85"
 description = "Async and blocking typed client for the Crypto Service REST API (crypto-server v2)"
