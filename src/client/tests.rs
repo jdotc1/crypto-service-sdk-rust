@@ -204,6 +204,61 @@ async fn send_raw_returns_any_status_with_extra_headers() {
     );
 }
 
+/// Records the URL of every request and answers 200.
+#[derive(Debug, Default)]
+struct Urls(std::sync::Mutex<Vec<String>>);
+
+impl Transport for Urls {
+    fn send(
+        &self,
+        request: HttpRequest,
+    ) -> transport::BoxFuture<'_, Result<HttpResponse, TransportError>> {
+        self.0.lock().expect("lock").push(request.url);
+        Box::pin(async {
+            Ok(HttpResponse {
+                status: 200,
+                headers: HeaderMap::new(),
+                body: Vec::new(),
+            })
+        })
+    }
+}
+
+#[tokio::test]
+async fn send_raw_refuses_a_path_that_would_change_the_host() {
+    let urls = Arc::new(Urls::default());
+    let client = Client::builder("https://api.example.com")
+        .api_key("synthetic-api-key")
+        .transport(urls.clone())
+        .build()
+        .expect("client");
+    for path in [
+        ".evil.example/x",
+        "@evil.example/x",
+        ":8443/x",
+        "v2/hash",
+        "",
+    ] {
+        let error = client
+            .send_raw(RawRequest::new(Method::GET, path))
+            .await
+            .expect_err(path);
+        assert!(matches!(error, Error::Config(_)), "{path}: {error}");
+    }
+    assert!(
+        urls.0.lock().expect("lock").is_empty(),
+        "a request was sent"
+    );
+    client
+        .send_raw(RawRequest::new(Method::GET, "/metrics"))
+        .await
+        .expect("a path from / is sent");
+    assert_eq!(
+        *urls.0.lock().expect("lock"),
+        ["https://api.example.com/metrics"]
+    );
+}
+
 #[test]
 fn raw_json_requests_encode_or_fail_cleanly() {
     let request = RawRequest::json(Method::POST, "/v2/hash", &hash_request()).expect("json");

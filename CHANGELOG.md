@@ -8,6 +8,13 @@ All notable changes to this crate are recorded here. The format follows
 
 ## [0.0.41] - Unreleased
 
+### Fixed
+
+- `send_raw` refuses a path that does not start with `/` with
+  `Error::Config`, sending nothing. Appended to the base URL, a path such
+  as `.evil.example/x` or `@evil.example/x` named another host, which
+  then received the client's credentials.
+
 ## [0.0.40] - 2026-11-16
 
 The first release: a typed client for crypto-server's v2 API at commit
