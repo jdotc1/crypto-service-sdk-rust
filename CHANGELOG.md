@@ -9,6 +9,16 @@ All notable changes to this crate are recorded here. The format follows
 
 ## [0.0.41] - Unreleased
 
+### Changed
+
+- Release files are reproducible: the release jobs package with the
+  toolchain in `mise.toml`, and `scripts/dist.sh` writes the SBOM with
+  the commit's timestamp, no random serial number and no build path.
+  `docs/REPRODUCING.md` rebuilds a release and gives the expected
+  checksums (0.0.40's `.crate` reproduces bit for bit).
+- The publish job uses trusted publishing only; the bootstrap token path
+  that published 0.0.40 is removed.
+
 ### Fixed
 
 - `send_raw` refuses a path that does not start with `/` with

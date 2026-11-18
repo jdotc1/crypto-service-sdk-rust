@@ -5,13 +5,15 @@
 
 ## Toolchain
 
-- Rust from `mise.toml` (1.98.1 locally); the floor is `rust-version`
-  1.85 and CI builds and tests on 1.85.0 and stable. `.cargo/config.toml`
+- Rust from `mise.toml` (1.98.1 locally, and in the release jobs, which
+  package with it); the floor is `rust-version` 1.85 and CI builds and
+  tests on 1.85.0 and stable. `.cargo/config.toml`
   makes the resolver pick dependency versions 1.85 can build.
 - Gate tools: cargo-llvm-cov 0.9.1 (`llvm-tools-preview`), cargo-deny
   0.20.2, rust-code-analysis-cli 0.0.25, cargo-semver-checks 0.51.0,
-  cargo-fuzz 0.13.2 with a nightly toolchain, and for the docs
-  markdownlint-cli2, codespell and reuse.
+  cargo-fuzz 0.13.2 with a nightly toolchain, cargo-cyclonedx 0.5.9 for
+  the release SBOM, and for the docs markdownlint-cli2, codespell and
+  reuse.
 
 ## Gates
 
@@ -25,7 +27,7 @@
 | `make coverage-branch` | 100% branches (nightly) | Coverage (branches) |
 | `make deny` | RustSec advisories, licences, bans (no OpenSSL), sources | Dependency policy |
 | `make complexity` | cyclomatic 10, cognitive 15, Halstead difficulty 30, 60 lines per function, 500 lines per file, every tracked `.rs` | Complexity ceilings |
-| `make versions`, `make package-check`, `make api-check` | version restatements, package allow-list, semver against crates.io | Release checks |
+| `make versions`, `make package-check`, `make api-check` | version restatements and the release toolchain, package allow-list, semver against crates.io | Release checks |
 | `make conformance` | the kit, the live blocking test, every example, every README block | Conformance |
 | `make bench-smoke` | each benchmark once | Build and Conformance |
 | `make fuzz` | each cargo-fuzz target for 60 s | Fuzz (pull requests) |
@@ -87,18 +89,23 @@ does the rest:
    `crypto-service-sdk-rust <version>` with the `.crate`, the CycloneDX
    SBOM (`.cdx.json`) and `SHA256SUMS`, provenance attestations, notes
    composed by `scripts/release_notes.py` (Highlights, What's Changed,
-   Checksums, Full Changelog), then `cargo publish` to crates.io.
-5. Check the live release and the crate on crates.io and docs.rs.
+   Checksums, Full Changelog), then `cargo publish` to crates.io with a
+   short-lived token from trusted publishing. `scripts/dist.sh` writes
+   the files, reproducibly: [docs/REPRODUCING.md](https://github.com/sebastienrousseau/crypto-service-sdk-rust/blob/main/docs/REPRODUCING.md)
+   rebuilds them and gives the expected checksums.
+5. Check the live release and the crate on crates.io and docs.rs, and
+   that a rebuild from the tag gives the same `SHA256SUMS`.
 
-### Settings the maintainer creates
+### Settings outside the repository
 
-None of these exist yet, and none are created by automation:
+Created by the maintainer, never by automation. State on 2026-11-18:
 
-| Setting | Where | Why |
-| :--- | :--- | :--- |
-| `release` environment | Settings, Environments | the publish job runs in it; add a required reviewer |
-| First publish of 0.0.40 | crates.io | crates.io registers a trusted publisher only for a crate that exists: publish 0.0.40 once by hand from the signed tag (`cargo publish --locked`), or set `CRATES_IO_BOOTSTRAP_TOKEN` (a scoped crates.io token) as a `release` environment secret for that one run, then delete it and revoke the token |
-| Trusted publisher | crates.io, `crypto-service-sdk`, Settings, Trusted Publishing | repository `sebastienrousseau/crypto-service-sdk-rust`, workflow `release.yml`, environment `release` |
-| GitHub Pages | Settings, Pages, Source: GitHub Actions | the manual's deploy job |
-| `PAGES_ENABLED` = `true` | Settings, Variables, Actions | turns the manual's deploy job on once Pages is enabled |
-| `KEYS.asc` | repository root | the maintainer's signing keys, added by the maintainer |
+| Setting | Where | Why | State |
+| :--- | :--- | :--- | :--- |
+| `release` environment | Settings, Environments | the publish job runs in it, with a required reviewer and a branch policy | In place |
+| Trusted publisher | crates.io, `crypto-service-sdk`, Settings, Trusted Publishing | repository `sebastienrousseau/crypto-service-sdk-rust`, workflow `release.yml`, environment `release`: the only way the workflow can publish | In place |
+| Bootstrap token | `release` environment secrets | published 0.0.40, the first version, before crates.io could register the trusted publisher (ADR 5) | Deleted after 0.0.40; the workflow no longer reads any token |
+| Branch protection on `main` | Settings, Branches | pull requests only, the CI checks required, signed commits | In place |
+| GitHub Pages | Settings, Pages, Source: GitHub Actions | the manual's deploy job | Not enabled yet |
+| `PAGES_ENABLED` = `true` | Settings, Variables, Actions | turns the manual's deploy job on once Pages is enabled | Not set yet |
+| `KEYS.asc` | repository root | the maintainer's signing keys, which the release workflow checks the tag against | In place |
