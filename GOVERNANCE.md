@@ -16,8 +16,11 @@ person in a personal capacity.
 
 ## Decisions
 
-- Everyday changes: a pull request into `main`, merged by the maintainer
-  when CI is green.
+- Everyday changes: a pull request into `main`, reviewed against the
+  checklist in [CONTRIBUTING.md](https://github.com/sebastienrousseau/crypto-service-sdk-rust/blob/main/CONTRIBUTING.md#how-a-pull-request-is-reviewed)
+  and merged by the maintainer when CI is green. With a single
+  maintainer, the maintainer's own pull requests have no second
+  reviewer; CI and that checklist are the review.
 - Decisions that will be questioned later get an ADR in
   [`docs/adr/`](https://github.com/sebastienrousseau/crypto-service-sdk-rust/tree/main/docs/adr).
 - Suite-wide decisions (the version, the method surface, the conformance

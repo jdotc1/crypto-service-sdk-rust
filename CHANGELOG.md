@@ -9,6 +9,17 @@ All notable changes to this crate are recorded here. The format follows
 
 ## [0.0.41] - Unreleased
 
+### Added
+
+- `docs/ASSURANCE.md`, the assurance case: threat model, trust
+  boundaries, secure design principles and the weaknesses countered,
+  each with its code or test; and `docs/security-review-2026-11.md`,
+  the review against it.
+- `docs/ROADMAP.md` covers the year to November 2027 and states the
+  non-goals; `CONTRIBUTING.md` states what a review checks.
+- Every source file states its copyright in an `SPDX-FileCopyrightText`
+  line.
+
 ### Changed
 
 - Release files are reproducible: the release jobs package with the
