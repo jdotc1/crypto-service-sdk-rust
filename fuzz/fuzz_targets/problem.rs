@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! An error answer: the first line is the status code, the rest is the
 //! body. It must become an `Error::Api` with an RFC 9457 problem, never a

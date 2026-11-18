@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! The conformance kit (`conformance/`, vendored from crypto-service)
 //! against a live server, through the SDK's public methods.

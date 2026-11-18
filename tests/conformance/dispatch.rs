@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! Sends a vector through the SDK method for its route, when the vector's
 //! body is exactly what that method's request type sends.

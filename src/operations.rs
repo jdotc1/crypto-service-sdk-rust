@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! One method per operation, generated for the async [`Client`] and, with
 //! the `blocking` feature, for `blocking::Client`. Names follow the

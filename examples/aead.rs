@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! XChaCha20-Poly1305 round trip: `POST /v2/encrypt`, then `/v2/decrypt`.
 //! The key is a synthetic test value; use a key from your own key

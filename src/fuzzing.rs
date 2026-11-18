@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! The response decoding paths without the network, for the cargo-fuzz
 //! targets in `fuzz/` and the benches in `benches/`. Compiled only under

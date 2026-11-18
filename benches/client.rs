@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! Client-side cost with no network: encoding a request body, decoding a
 //! success answer and decoding a problem. Needs the `internals` feature

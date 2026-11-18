@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 # SPDX-License-Identifier: Apache-2.0 OR MIT
 # The toolchain for local work; CI installs the same with
 # dtolnay/rust-toolchain. rust-version in Cargo.toml (1.85) is the floor.

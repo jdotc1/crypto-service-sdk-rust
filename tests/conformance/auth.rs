@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! HS256 tokens for the kit's principals (`conformance-<group>`), signed
 //! with the server's `JWT_SECRET`. Test code: the SDK itself never signs

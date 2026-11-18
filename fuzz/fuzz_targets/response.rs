@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! A 2xx body, decoded as every typed call's answer. It must decode or
 //! fail with `Error::Decode` naming only a position, never a panic.

@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 # SPDX-License-Identifier: Apache-2.0 OR MIT
 # Resolve dependencies that build on rust-version (1.85), so the lockfile
 # CI tests the MSRV with is one the MSRV can build.

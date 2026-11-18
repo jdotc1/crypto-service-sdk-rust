@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! How failures arrive: an RFC 9457 problem for a key that does not
 //! exist, a validation problem with its per-field errors, and a transport

@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! The checks the fuzz targets run. Each states a promise the crate's
 //! documentation makes about what a server's answer turns into, and

@@ -1,3 +1,4 @@
+<!-- SPDX-FileCopyrightText: 2026 Sebastien Rousseau -->
 <!-- SPDX-License-Identifier: Apache-2.0 OR MIT -->
 
 # 1. A thin client over the server
