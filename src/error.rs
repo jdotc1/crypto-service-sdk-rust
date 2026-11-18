@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! The error every call returns: an RFC 9457 problem from the server, a
 //! request that got no answer, or an answer that did not decode.

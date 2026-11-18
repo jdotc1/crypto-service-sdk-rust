@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 # SPDX-License-Identifier: Apache-2.0 OR MIT
 # pre-commit (https://pre-commit.com): `pre-commit install` once, then the
 # fast checks run on every commit. Local hooks only, so they use the same

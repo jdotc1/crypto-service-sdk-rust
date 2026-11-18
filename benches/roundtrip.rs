@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! A loopback round trip, `round_trip_hash`, against the server at
 //! `CRYPTO_SERVICE_URL` (with `CRYPTO_SERVICE_API_KEY`). Reports itself

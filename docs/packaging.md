@@ -1,3 +1,4 @@
+<!-- SPDX-FileCopyrightText: 2026 Sebastien Rousseau -->
 <!-- SPDX-License-Identifier: Apache-2.0 OR MIT -->
 
 # Packaging
@@ -24,4 +25,6 @@ The crate is published to crates.io as `crypto-service-sdk` (library
 
 Each GitHub release carries the `.crate`, a CycloneDX SBOM
 (`crypto-service-sdk-<version>.cdx.json`), `SHA256SUMS` and build
-provenance attestations.
+provenance attestations. The `.crate` on the release and on crates.io
+is the same file, and a rebuild from the signed tag reproduces it:
+see [Reproducing a release](REPRODUCING.md).

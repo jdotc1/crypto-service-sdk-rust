@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 # SPDX-License-Identifier: Apache-2.0 OR MIT
 # The suite complexity ceilings per function (cognitive 15, 60 lines),
 # enforced by `make lint` with -W clippy::cognitive_complexity and

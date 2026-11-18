@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! The async client: the request pipeline and decoding.
 
@@ -77,7 +78,7 @@ fn redacted(headers: &HeaderMap, name: &HeaderName) -> Option<&'static str> {
 pub struct RawRequest {
     /// The method.
     pub method: Method,
-    /// The path, from `/`, for example `/v2/hash`.
+    /// The path, from `/`, for example `/v2/hash`; any other is refused.
     pub path: String,
     /// The body, sent as it is; `Content-Type: application/json` unless
     /// `headers` sets another.
@@ -153,7 +154,11 @@ impl Client {
     ///
     /// # Errors
     ///
-    /// [`Error::Transport`] when no answer arrived; never [`Error::Api`].
+    /// [`Error::Config`], with nothing sent, when the path does not start
+    /// with `/`: appended to the base URL, such a path could name another
+    /// host (`.evil.example`, `@evil.example`) and receive the
+    /// credentials. [`Error::Transport`] when no answer arrived; never
+    /// [`Error::Api`].
     pub async fn send_raw(&self, request: RawRequest) -> Result<HttpResponse, Error> {
         let RawRequest {
             method,
@@ -161,6 +166,9 @@ impl Client {
             body,
             headers,
         } = request;
+        if !path.starts_with('/') {
+            return Err(Error::Config("the request path does not start with /"));
+        }
         self.exchange(method, &path, body, headers).await
     }
 

@@ -1,3 +1,4 @@
+<!-- SPDX-FileCopyrightText: 2026 Sebastien Rousseau -->
 <!-- SPDX-License-Identifier: Apache-2.0 OR MIT -->
 
 # Crypto Service SDK for Rust
@@ -8,7 +9,7 @@ the server, which holds the keys and runs the algorithms.
 
 ```toml
 [dependencies]
-crypto-service-sdk = "0.0.40"
+crypto-service-sdk = "0.0.41"
 ```
 
 - [Architecture](ARCHITECTURE.md): how a call travels.

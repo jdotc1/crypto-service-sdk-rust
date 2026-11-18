@@ -1,3 +1,4 @@
+<!-- SPDX-FileCopyrightText: 2026 Sebastien Rousseau -->
 <!-- SPDX-License-Identifier: Apache-2.0 OR MIT -->
 
 # Changelog
@@ -5,6 +6,36 @@
 All notable changes to this crate are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions move in
 `0.0.1` steps, in lockstep with the Crypto Service SDKs.
+
+## [0.0.41] - Unreleased
+
+### Added
+
+- `docs/ASSURANCE.md`, the assurance case: threat model, trust
+  boundaries, secure design principles and the weaknesses countered,
+  each with its code or test; and `docs/security-review-2026-11.md`,
+  the review against it.
+- `docs/ROADMAP.md` covers the year to November 2027 and states the
+  non-goals; `CONTRIBUTING.md` states what a review checks.
+- Every source file states its copyright in an `SPDX-FileCopyrightText`
+  line.
+
+### Changed
+
+- Release files are reproducible: the release jobs package with the
+  toolchain in `mise.toml`, and `scripts/dist.sh` writes the SBOM with
+  the commit's timestamp, no random serial number and no build path.
+  `docs/REPRODUCING.md` rebuilds a release and gives the expected
+  checksums (0.0.40's `.crate` reproduces bit for bit).
+- The publish job uses trusted publishing only; the bootstrap token path
+  that published 0.0.40 is removed.
+
+### Fixed
+
+- `send_raw` refuses a path that does not start with `/` with
+  `Error::Config`, sending nothing. Appended to the base URL, a path such
+  as `.evil.example/x` or `@evil.example/x` named another host, which
+  then received the client's credentials.
 
 ## [0.0.40] - 2026-11-16
 

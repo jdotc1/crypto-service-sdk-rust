@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! The blocking client (`--features blocking`): the same calls, no
 //! `async`. Runs a KMS round trip on the server's local provider.

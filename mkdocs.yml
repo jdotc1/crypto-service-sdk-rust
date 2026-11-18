@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 # SPDX-License-Identifier: Apache-2.0 OR MIT
 # The user manual: MkDocs Material from docs/, built with --strict by the
 # Manual workflow and deployed to GitHub Pages. Root documents are
@@ -68,6 +69,9 @@ nav:
   - Benchmarks: BENCHMARKS.md
   - Policies: POLICIES.md
   - Packaging: packaging.md
+  - Reproducing a release: REPRODUCING.md
+  - Assurance case: ASSURANCE.md
+  - Security review 2026-11: security-review-2026-11.md
   - Roadmap: ROADMAP.md
   - Decision records:
       - Index: adr/README.md

@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 # SPDX-License-Identifier: Apache-2.0 OR MIT
 # cargo-fuzz targets for the response decoding path: `cargo +nightly fuzz
 # run <target>` from the repository root. A crate of its own, with its own

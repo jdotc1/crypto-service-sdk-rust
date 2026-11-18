@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! Ed25519 with a server-held key: generate it, sign with its keyId,
 //! verify against its public key, then delete it.

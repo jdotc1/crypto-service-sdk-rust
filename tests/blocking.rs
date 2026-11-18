@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //! The blocking client against a live server (`CRYPTO_SERVICE_URL` and
 //! `CRYPTO_SERVICE_API_KEY`), shared by several threads at once. Skipped

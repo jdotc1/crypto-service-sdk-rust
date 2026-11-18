@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 # SPDX-License-Identifier: Apache-2.0 OR MIT
 #
 # A bounded cargo-fuzz run of every target in fuzz/ on each pull request:

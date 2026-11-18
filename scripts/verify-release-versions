@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau
 # SPDX-License-Identifier: Apache-2.0 OR MIT
 #
 # Fails when any restatement of the crate version disagrees with
 # Cargo.toml, the single source of truth: both lockfiles, CITATION.cff,
 # the CHANGELOG heading, the SECURITY.md and SUPPORT.md support tables,
-# the README install snippet, the docs home page and the bug report form.
+# the README install snippet, the docs home page and the bug report form;
+# and that the release jobs use the toolchain mise.toml pins.
 # The User-Agent and VERSION constant are built from Cargo.toml, so they
 # cannot drift. With --tag vX.Y.Z it also checks the tag names that
 # version and that releases/v<version>.md (the release highlights) exists.
@@ -46,6 +48,14 @@ expect SUPPORT.md "| \`$version\` | Current"
 expect README.md "crypto-service-sdk = \"$version\""
 expect docs/index.md "crypto-service-sdk = \"$version\""
 expect .github/ISSUE_TEMPLATE/bug_report.yml "placeholder: \"$version\""
+
+# The release jobs package with the toolchain in mise.toml, so that a
+# rebuild with it gives the released .crate (docs/REPRODUCING.md).
+rust="$(sed -n 's/^rust = "\([^"]*\)"$/\1/p' mise.toml)"
+if [ "$(grep -cF "toolchain: $rust #" .github/workflows/release.yml)" -ne 2 ]; then
+  echo "verify-release-versions: release.yml does not package with Rust $rust (mise.toml)" >&2
+  failures=$((failures + 1))
+fi
 
 if ! grep -qE "^## \[$version\] - ([0-9]{4}-[0-9]{2}-[0-9]{2}|Unreleased)$" CHANGELOG.md; then
   echo "verify-release-versions: CHANGELOG.md has no ## [$version] heading" >&2
