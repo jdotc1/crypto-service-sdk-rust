@@ -60,6 +60,23 @@ fn error_accessors_cover_every_kind() {
     assert!(config.problem().is_none());
 }
 
+#[test]
+fn api_error_escapes_server_control_characters_only() {
+    let mut problem = Problem::blank(400);
+    problem.title = "Bad\n\u{1b}[31m —".to_owned();
+    problem.kind = "urn:bad\r\t".to_owned();
+    let error = ApiError {
+        status: 400,
+        problem: problem.clone(),
+    };
+    assert_eq!(
+        error.to_string(),
+        "crypto-service API error: HTTP 400 Bad\\n\\u{1b}[31m — (urn:bad\\r\\t)"
+    );
+    // Keep the caller-visible structured problem unchanged.
+    assert_eq!(error.problem, problem);
+}
+
 struct Broken;
 
 impl Read for Broken {
