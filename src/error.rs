@@ -94,12 +94,33 @@ impl ApiError {
     }
 }
 
+// Escape only control characters from server-controlled fields when
+// formatting an error for diagnostics. Preserve the original Problem data.
+struct EscapedControls<'a>(&'a str);
+
+impl fmt::Display for EscapedControls<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for ch in self.0.chars() {
+            if ch.is_control() {
+                for escaped in ch.escape_default() {
+                    write!(f, "{escaped}")?;
+                }
+            } else {
+                write!(f, "{ch}")?;
+            }
+        }
+        Ok(())
+    }
+}
+
 impl fmt::Display for ApiError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "crypto-service API error: HTTP {} {} ({})",
-            self.status, self.problem.title, self.problem.kind
+            self.status,
+            EscapedControls(&self.problem.title),
+            EscapedControls(&self.problem.kind)
         )
     }
 }
