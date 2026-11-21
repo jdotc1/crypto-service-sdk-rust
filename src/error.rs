@@ -94,12 +94,27 @@ impl ApiError {
     }
 }
 
+// Escape only controls in server-controlled text before it reaches a log.
+fn escape_control_chars(text: &str) -> String {
+    let mut escaped = String::with_capacity(text.len());
+    for ch in text.chars() {
+        if ch.is_control() {
+            escaped.extend(ch.escape_default());
+        } else {
+            escaped.push(ch);
+        }
+    }
+    escaped
+}
+
 impl fmt::Display for ApiError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "crypto-service API error: HTTP {} {} ({})",
-            self.status, self.problem.title, self.problem.kind
+            self.status,
+            escape_control_chars(&self.problem.title),
+            escape_control_chars(&self.problem.kind)
         )
     }
 }
