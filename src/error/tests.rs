@@ -60,6 +60,26 @@ fn error_accessors_cover_every_kind() {
     assert!(config.problem().is_none());
 }
 
+
+#[test]
+fn api_error_display_escapes_server_control_characters() {
+    let mut problem = Problem::blank(400);
+    problem.title = "Invalid\n\t\u{1b}[31mDonnées".to_owned();
+    problem.kind = "urn:test:\r\u{1b}".to_owned();
+    let error = ApiError { status: 400, problem };
+
+    let rendered = error.to_string();
+    assert!(rendered.starts_with(
+        r"crypto-service API error: HTTP 400 Invalid\n\t\u{1b}[31mDonnées"
+    ));
+    assert!(rendered.contains(r"(urn:test:\r\u{1b})"));
+    assert!(!rendered.chars().any(char::is_control));
+
+    // Display sanitizes diagnostics only; callers retain the exact server data.
+    assert_eq!(error.problem.title, "Invalid\n\t\u{1b}[31mDonnées");
+    assert_eq!(error.problem.kind, "urn:test:\r\u{1b}");
+}
+
 struct Broken;
 
 impl Read for Broken {
