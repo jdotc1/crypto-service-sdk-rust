@@ -32,6 +32,9 @@ All notable changes to this crate are recorded here. The format follows
 
 ### Fixed
 
+- Escape server-supplied control characters in the displayed API problem
+  title and type to prevent log-line and terminal-control injection; the
+  structured `Problem` remains unchanged.
 - `send_raw` refuses a path that does not start with `/` with
   `Error::Config`, sending nothing. Appended to the base URL, a path such
   as `.evil.example/x` or `@evil.example/x` named another host, which
